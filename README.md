@@ -1,102 +1,251 @@
-# Turborepo starter: Next.js + Elysia
+<div align="center">
 
-This is a community-maintained example. If you experience a problem, please submit a pull request with a fix. GitHub Issues will be closed.
+# Kino
 
-## Using this example
+**Your home cinema, anywhere.**
 
-Run the following command:
+A self-hosted media server that turns a folder of movies into a private, Netflix-like streaming experience.
+
+[Features](#features) · [Quick start](#quick-start) · [Architecture](#architecture) · [Roadmap](#roadmap) · [Contributing](#contributing)
+
+</div>
+
+---
+
+## What is Kino?
+
+Kino is a self-hosted media server, similar in spirit to Plex or Jellyfin, but built with a modern web stack and a premium design from day one.
+
+You point Kino at a folder of movies on your Mac mini, PC, NAS or homelab, and it takes care of the rest:
+
+- Scans your video files
+- Fetches metadata, posters and backdrops from TMDb
+- Detects external subtitles (`.srt`, `.vtt`) and converts them on the fly
+- Streams playback through a modern web player
+- Saves your progress so you can resume later
+- Works locally, or remotely via an optional Cloudflare Tunnel
+
+Your files stay on your machine. Kino is **not** a SaaS — there is no upload, no external cloud, no public catalog.
+
+> **Positioning:** Plex for the plumbing, Netflix for the experience, Letterboxd / Mubi for the aesthetic.
+
+## Features
+
+### MVP (v0.1)
+
+- **One-command install** via Docker Compose (PostgreSQL included)
+- **First-run setup** with admin account creation and library configuration
+- **Library scanner** for `.mp4`, `.mkv`, `.mov`, `.m4v`, `.webm`
+- **TMDb metadata** — titles, synopses, genres, posters, backdrops
+- **External subtitles** — auto-detected, language-parsed, SRT → WebVTT conversion
+- **Direct play** for web-compatible files (MP4 / H.264 / AAC)
+- **Resume playback** with automatic progress saving every 10 seconds
+- **Continue watching**, **favorites**, **recently added**, **search**
+- **Secure streaming routes** — every media route is authenticated
+- **Premium UI** — dark, cinematic, immersive
+
+### After MVP
+
+- HLS / CMAF transcoding with FFmpeg for incompatible files (v0.2)
+- Remote access via Cloudflare Tunnel and documented reverse proxy setups (v0.3)
+- Full TV series support — seasons, episodes, next episode (v0.4)
+- Collections, watchlist, stats, history, simple recommendations (v0.5)
+
+## Tech stack
+
+| Layer | Choice |
+| --- | --- |
+| Runtime | [Bun](https://bun.sh) |
+| Monorepo | [Turborepo](https://turbo.build) + Bun workspaces |
+| Backend | Bun + [Hono](https://hono.dev) + [tRPC](https://trpc.io) |
+| Frontend | [Next.js](https://nextjs.org) + React + Tailwind + shadcn/ui |
+| Database | PostgreSQL + [Drizzle ORM](https://orm.drizzle.team) |
+| Auth | [Better Auth](https://www.better-auth.com) |
+| Video | FFmpeg + ffprobe |
+| Streaming | Direct play (MVP) → HLS fMP4 / CMAF (v0.2+) |
+| Player | [Shaka Player](https://shaka-player-demo.appspot.com/) (hls.js fallback) |
+| Deployment | Docker Compose |
+| Remote access | Cloudflare Tunnel (optional) + reverse proxy |
+
+## Quick start
+
+### Requirements
+
+- Docker and Docker Compose
+- A folder containing video files you legally own
+- A free [TMDb API key](https://www.themoviedb.org/settings/api)
+
+### 1. Clone and configure
 
 ```bash
-npx create-turbo@latest -e with-nextjs-elysia
+git clone https://github.com/miicolas/kino.git
+cd kino
+cp .env.example .env
 ```
 
-## What's inside?
+Edit `.env`:
 
-This Turborepo includes the following packages & apps:
+```env
+APP_URL=http://localhost:3000
+SERVER_URL=http://localhost:3001
 
-### Apps and Packages
+AUTH_SECRET=change-me-super-secret
+DATABASE_URL=postgres://kino:kino@postgres:5432/kino
 
-```shell
-.
-├── apps
-│   └── web                       # Next.js app (https://nextjs.org) with embedded Elysia server
-└── packages
-    ├── @repo/contract            # Shared TypeBox contracts and Drizzle ORM schemas
-    ├── @repo/typescript-config   # `tsconfig.json`s used throughout the monorepo
-    └── @repo/ui                  # Shareable stub React component library.
+MEDIA_PATH=/absolute/path/to/your/movies
+
+TMDB_API_KEY=your-tmdb-key
 ```
 
-Each package and application are mostly written in [TypeScript](https://www.typescriptlang.org/).
-
-### Tech Stack
-
-- **Frontend**: Next.js 15 with App Router
-- **Backend**: ElysiaJS - Type-safe, high-performance web framework
-- **Database**: PostgreSQL with Drizzle ORM
-- **API Contract**: TypeBox for runtime type validation
-- **Package Manager**: Bun
-
-### Utilities
-
-This `Turborepo` has some additional tools already set for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type-safety
-- [Biome](https://biomejs.dev/) for code linting and formatting
-- [Drizzle ORM](https://orm.drizzle.team/) for database operations
-
-### Commands
-
-This `Turborepo` already configured useful commands for all your apps and packages.
-
-#### Build
+### 2. Launch
 
 ```bash
-# Will build all the app & packages with the supported `build` script.
-bun run build
+docker compose -f docker/docker-compose.yml up -d
 ```
 
-#### Develop
+### 3. Open the app
+
+Visit [http://localhost:3000](http://localhost:3000), create your admin account, point Kino at your library, and let it scan.
+
+### Optional: remote access
+
+Spin up the bundled Cloudflare Tunnel profile after setting `CLOUDFLARE_TUNNEL_TOKEN` in `.env`:
 
 ```bash
-# Will run the development server for all the app & packages with the supported `dev` script.
-bun run dev
+docker compose -f docker/docker-compose.yml --profile remote up -d
 ```
 
-#### Lint
+Reverse proxy setups (Caddy, Nginx, Traefik) are documented in [`apps/docs`](apps/docs).
+
+## Folder layout for your media
+
+Kino expects one folder per movie, with subtitles named alongside the video file:
+
+```
+/media/
+  Drive (2011)/
+    Drive (2011).mkv
+    Drive (2011).fr.srt
+    Drive (2011).en.srt
+```
+
+Supported subtitle naming:
+
+```
+Movie Name (2020).fr.srt
+Movie Name (2020).en.vtt
+Movie Name (2020).forced.fr.srt
+```
+
+## Architecture
+
+```
+kino/
+├── apps/
+│   ├── web        # Next.js — UI, player, settings
+│   ├── server     # Bun + Hono + tRPC — API, scanner, streaming
+│   └── docs       # Documentation site
+│
+├── packages/
+│   ├── db         # Drizzle schema + client
+│   ├── auth       # Better Auth config + helpers
+│   ├── ui         # Shared design system
+│   ├── media      # File detection, filename parsing, hashing
+│   ├── ffmpeg     # ffprobe + transcoding wrappers
+│   ├── metadata   # TMDb integration
+│   ├── subtitles  # Detection, language parsing, SRT→VTT
+│   ├── config     # Typed env loading
+│   ├── validators # Zod schemas
+│   ├── logger     # Structured logs
+│   └── types      # Shared types / DTOs
+│
+├── tooling/       # eslint, typescript, tailwind configs
+└── docker/        # Dockerfiles + docker-compose.yml
+```
+
+### Streaming routes
+
+Video is never served over tRPC. Dedicated HTTP routes, all authenticated:
+
+```
+GET /video/:assetId/source
+GET /stream/:assetId/master.m3u8
+GET /stream/:assetId/:segment
+GET /subtitles/:subtitleTrackId.vtt
+GET /poster/:mediaId
+GET /backdrop/:mediaId
+```
+
+### Scan pipeline
+
+```
+scan folder → detect video → ffprobe → hash → create media_file
+            → parse filename → TMDb lookup → media_item + artwork
+            → detect subtitles → SRT→VTT → subtitle_tracks
+            → check direct-play compatibility → video_asset
+```
+
+## Development
 
 ```bash
-# Will lint all the app & packages with the supported `lint` script.
+bun install
+bun run dev          # starts web + server + docs
+bun run db:migrate
+bun run db:studio
+bun run typecheck
 bun run lint
 ```
 
-### Remote Caching
+Workspaces are managed by Bun; tasks are orchestrated by Turborepo. Persistent processes (`dev`, `db:studio`) are configured in [`turbo.json`](turbo.json).
 
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
+## Roadmap
 
-Turborepo can use a technique known as [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
+| Version | Theme | Highlights |
+| --- | --- | --- |
+| **v0.1** | MVP self-host | Docker, scanner, TMDb, subtitles, direct play, progress, favorites |
+| **v0.2** | Robust playback | HLS transcoding, Shaka Player, compatibility detection |
+| **v0.3** | Remote access | Cloudflare Tunnel, reverse proxy docs, signed URLs |
+| **v0.4** | TV series | Seasons, episodes, next episode, continue series |
+| **v0.5** | Premium experience | Collections, watchlist, moods, stats |
+| **v1.0** | Stable | Backup/restore, user management, polished UI |
 
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
+## Security model
 
-```bash
-npx turbo login
-```
+- Authentication is mandatory; sessions are HTTP-only.
+- No media file is ever publicly served — every streaming and subtitle route checks the session.
+- The first user created becomes admin; public registration is disabled afterwards.
+- Signed, expiring playback URLs and rate limiting are on the roadmap.
 
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
+## Legal
 
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
+Kino is designed to organize and play content that **you legally own or are allowed to host**. It does **not** include:
 
-```bash
-npx turbo link
-```
+- scraping of pirated content
+- public catalogs of copyrighted material
+- download tools for protected media
+- public sharing of content you do not own
 
-## Useful Links
+What you put in your media folder is your responsibility.
 
-Learn more about the power of Turborepo:
+## Contributing
 
-- [Tasks](https://turborepo.dev/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.dev/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.dev/docs/reference/configuration)
-- [CLI Usage](https://turborepo.dev/docs/reference/command-line-reference)
+Kino is open source and contributions are welcome. Before opening a PR:
+
+- Keep the stack as-is: Bun, Turborepo, PostgreSQL, Drizzle, Better Auth.
+- Don't move video through tRPC — use the dedicated HTTP routes.
+- Treat subtitles as a core feature, not an add-on.
+- Preserve the self-hosted, local-first philosophy.
+
+Open an issue first for anything non-trivial so we can align on scope.
+
+## License
+
+To be defined. Suggested: AGPL-3.0 or MIT — pick one before the first public release.
+
+---
+
+<div align="center">
+
+Built with care for people who still believe their movie collection deserves a beautiful home.
+
+</div>

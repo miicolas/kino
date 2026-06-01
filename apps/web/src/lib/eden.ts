@@ -1,9 +1,9 @@
 import { treaty } from '@elysiajs/eden'
-import { app } from '@/app/api/v1/[[...slugs]]/route'
+import type { app } from '@/app/api/v1/[[...slugs]]/route'
 
+const baseUrl =
+  typeof window === 'undefined'
+    ? (process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000')
+    : ''
 
-export const api =
-  // process is defined on server side and build time
-  typeof process !== 'undefined'
-    ? treaty<typeof app>(app).api
-    : treaty<typeof app>('localhost:3001').api
+export const api = treaty<typeof app>(baseUrl).api

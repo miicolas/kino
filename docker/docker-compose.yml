@@ -1,0 +1,73 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: kino-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: kino
+      POSTGRES_PASSWORD: kino
+      POSTGRES_DB: kino
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  migrate:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.server
+    container_name: kino-migrate
+    command: ["bun", "run", "--filter", "@repo/contract", "db:push"]
+    environment:
+      DATABASE_URL: postgres://kino:kino@postgres:5432/kino
+    depends_on:
+      - postgres
+    restart: "no"
+
+  server:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.server
+    container_name: kino-server
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgres://kino:kino@postgres:5432/kino
+      AUTH_SECRET: ${AUTH_SECRET}
+      APP_URL: ${APP_URL}
+      SERVER_URL: ${SERVER_URL}
+      MEDIA_ROOT: /media
+      CACHE_ROOT: /cache
+      CONFIG_ROOT: /config
+      TMDB_API_KEY: ${TMDB_API_KEY}
+    volumes:
+      - ${MEDIA_PATH}:/media
+      - ./data/cache:/cache
+      - ./data/config:/config
+    ports:
+      - "3001:3001"
+    depends_on:
+      - postgres
+      - migrate
+
+  web:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.web
+    container_name: kino-web
+    restart: unless-stopped
+    environment:
+      NEXT_PUBLIC_SERVER_URL: ${SERVER_URL}
+      NEXT_PUBLIC_APP_URL: ${APP_URL}
+    ports:
+      - "3000:3000"
+    depends_on:
+      - server
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: kino-cloudflared
+    command: tunnel --no-autoupdate run --token ${CLOUDFLARE_TUNNEL_TOKEN}
+    restart: unless-stopped
+    profiles:
+      - remote

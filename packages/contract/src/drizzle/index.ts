@@ -1,2 +1,2 @@
-export * from "./table.schema";
-export * from "./table.relation";
+export { db } from "./db";
+export * from "../auth/auth-schema";

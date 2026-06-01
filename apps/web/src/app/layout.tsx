@@ -3,6 +3,10 @@ import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
 import "./globals.css";
 import QueryProvider from "@/providers/query-provider";
+import { Outfit } from "next/font/google";
+import { cn } from "@/lib/utils";
+
+const outfit = Outfit({subsets:['latin'],variable:'--font-sans'});
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -17,7 +21,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${GeistSans.variable} ${GeistMono.variable} h-full antialiased`}
+      className={cn("h-full", "antialiased", GeistSans.variable, GeistMono.variable, "font-sans", outfit.variable)}
     >
       <body className="min-h-full flex flex-col" suppressHydrationWarning>
         <QueryProvider>

@@ -1,23 +1,11 @@
 {
   "extends": "@repo/typescript-config/base.json",
   "compilerOptions": {
-    // 1. 启用复合项目模式（核心配置）
-    "composite": true,
-    "declaration": true,
-    "declarationMap": true,
-    "incremental": true,
-    "tsBuildInfoFile": "./.tsbuildinfo/contract",
-    "sourceMap": true,
     "outDir": "./dist",
     "rootDir": "./src",
-    "skipLibCheck": true,
-    "strict": true
+    "declaration": false,
+    "declarationMap": false
   },
-  "include": [
-    "src/**/*"
-  ],
-  "exclude": [
-    "dist",
-    "node_modules"
-  ]
+  "include": ["src"],
+  "exclude": ["node_modules", "dist"]
 }
