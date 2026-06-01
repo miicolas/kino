@@ -1,9 +1,9 @@
 import { Elysia } from 'elysia';
-import { appRouter } from "~/server";
+import { router } from "~/server";
 
 export const app = new Elysia({ name: "app", prefix: "/api" })
   .get('/', () => ({ message: "Kino API" }))
-  .use(appRouter)
+  .use(router)
 
 const handle = (req: Request) => app.handle(req)
 
