@@ -12,11 +12,6 @@
 
 # testing
 /coverage
-/test-results
-/playwright-report
-/blob-report
-/.playwright
-.last-run.json
 
 # next.js
 /.next/
