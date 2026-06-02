@@ -92,3 +92,83 @@ app/
     └── sign-in/page.tsx
 ```
 <!-- END:data-fetching-convention -->
+
+<!-- BEGIN:url-query-state-convention -->
+## URL Query State Convention (nuqs)
+
+Use [`nuqs`](https://nuqs.dev) for type-safe URL query state (`?search=`, `?page=`, filters, sort, tabs). Prefer it over `useState` whenever the state should be shareable, bookmarkable, or survive a refresh.
+
+### Setup (already done — global)
+`<NuqsAdapter>` (from `nuqs/adapters/next/app`) is mounted in `src/providers/query-provider.tsx`, which wraps the whole app via the root layout. No per-page provider is needed — any `"use client"` component can use the hooks directly.
+
+### Convention: one `search-params.ts` per feature
+Colocate a `search-params.ts` next to the feature. Export a named parsers object **and** a `createSearchParamsCache(parsers)`. Import parsers from `nuqs/server` (works in both server and client files).
+
+```ts
+// app/(app)/expenses/search-params.ts
+import { createSearchParamsCache, parseAsInteger, parseAsString, parseAsStringEnum } from "nuqs/server";
+
+export const expensesParsers = {
+  search: parseAsString,
+  page: parseAsInteger.withDefault(1),
+  limit: parseAsInteger.withDefault(20),
+  sortOrder: parseAsStringEnum(["asc", "desc"]).withDefault("desc"),
+};
+
+export const expensesSearchParamsCache = createSearchParamsCache(expensesParsers);
+```
+
+### Client components — `useQueryState` / `useQueryStates` (from `nuqs`)
+```tsx
+"use client";
+
+import { useQueryState, useQueryStates } from "nuqs";
+import { expensesParsers } from "../search-params";
+
+export function ExpenseFilters() {
+  // single key
+  const [search, setSearch] = useQueryState("search", expensesParsers.search);
+  // multiple keys
+  const [{ page, sortOrder }, setQuery] = useQueryStates(expensesParsers);
+
+  return (
+    <input
+      value={search ?? ""}
+      onChange={(e) => setSearch(e.target.value || null)} // null clears the param
+    />
+  );
+}
+```
+
+### Server `page.tsx` — parse the cache, feed the prefetch
+Call `cache.parse(await searchParams)` at the top of the async page, then use the typed values to drive `prefetchQuery` so server hydration matches the client query.
+
+```tsx
+import type { SearchParams } from "nuqs/server";
+import { getQueryClient, HydrateClient } from "@/orpc/query/hydration";
+import "@/orpc/server";
+import { orpc } from "@/orpc/client";
+import { expensesSearchParamsCache } from "./search-params";
+import PageClient from "./page.client";
+
+export default async function Page({ searchParams }: { searchParams: Promise<SearchParams> }) {
+  const { page, limit, search } = expensesSearchParamsCache.parse(await searchParams);
+
+  const queryClient = getQueryClient();
+  await queryClient.prefetchQuery(
+    orpc.expenses.list.queryOptions({ input: { page, limit, search } })
+  );
+
+  return (
+    <HydrateClient client={queryClient}>
+      <PageClient />
+    </HydrateClient>
+  );
+}
+```
+
+**Rules**
+- Parsers live in `nuqs/server`; hooks (`useQueryState`, `useQueryStates`) live in `nuqs`.
+- Set a param to `null` to remove it from the URL.
+- Keep the parsers object as the single source of truth — reuse it in the client hooks, the cache, and the server query input so all three stay in sync.
+<!-- END:url-query-state-convention -->

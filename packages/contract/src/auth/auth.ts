@@ -2,7 +2,10 @@ import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { nextCookies } from "better-auth/next-js";
 import { admin } from "better-auth/plugins";
+import type { User } from "better-auth";
+import { count } from "drizzle-orm";
 import { db } from "../drizzle/db";
+import { user } from "../schema/auth/schema";
 import { env } from "../env";
 
 function getAllowedHosts(): string[] {
@@ -13,7 +16,7 @@ function getAllowedHosts(): string[] {
       ...extra
         .split(",")
         .map((host) => host.trim())
-        .filter(Boolean)
+        .filter(Boolean),
     );
   }
   return hosts;
@@ -31,4 +34,21 @@ export const auth = betterAuth({
     autoSignIn: true,
   },
   plugins: [nextCookies(), admin({ defaultRole: "user" })],
+  databaseHooks: {
+    user: {
+      create: {
+        before: async (newUser: User) => {
+          const [row] = await db.select({ count: count() }).from(user);
+          const isFirstUser = (row?.count ?? 0) === 0;
+
+          return {
+            data: {
+              ...newUser,
+              role: isFirstUser ? "admin" : "user",
+            },
+          };
+        },
+      },
+    },
+  },
 });
