@@ -54,7 +54,7 @@ export function SignUpForm() {
           setError(ctx.error.message ?? "An error occurred during sign up.");
         },
         onSuccess: () => {
-          router.push("/");
+          router.push(PAGES.SETUP);
         },
       }
     );
