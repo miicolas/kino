@@ -1,7 +1,11 @@
 import { pgEnum, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { user } from "../auth/schema";
 
-export const libraryTypeEnum = pgEnum("library_type", ["movie"]);
+export const libraryTypeEnum = pgEnum("library_type", [
+  "movie",
+  "series",
+  "documentary",
+]);
 
 export const libraries = pgTable("libraries", {
   id: uuid("id").primaryKey().defaultRandom(),

@@ -21,27 +21,30 @@ import {
   UserIcon,
 } from "lucide-react";
 
-const user = {
-  name: "Shaban Haider",
-  email: "shaban@efferd.com",
-  avatar: "https://github.com/shabanhr.png",
+export type NavUserData = {
+  name: string;
+  email: string;
+  image?: string | null;
 };
 
-export function NavUser() {
+export function NavUser({ user }: { user: NavUserData }) {
+  const initial = user.name.charAt(0).toUpperCase();
+  const avatarSrc = user.image ?? undefined;
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Avatar className="size-8">
-          <AvatarImage src={user.avatar} />
-          <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+          <AvatarImage src={avatarSrc} />
+          <AvatarFallback>{initial}</AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-60">
         <DropdownMenuItem className="flex items-center justify-start gap-2">
           <DropdownMenuLabel className="flex items-center gap-3">
             <Avatar className="size-10">
-              <AvatarImage src={user.avatar} />
-              <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+              <AvatarImage src={avatarSrc} />
+              <AvatarFallback>{initial}</AvatarFallback>
             </Avatar>
             <div>
               <span className="font-medium text-foreground">{user.name}</span>{" "}
@@ -54,13 +57,17 @@ export function NavUser() {
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem>
-            <UserIcon />
-            Account
+          <DropdownMenuItem asChild>
+            <a href="/settings/account">
+              <UserIcon />
+              Account
+            </a>
           </DropdownMenuItem>
-          <DropdownMenuItem>
-            <SettingsIcon />
-            Settings
+          <DropdownMenuItem asChild>
+            <a href="/settings/server">
+              <SettingsIcon />
+              Settings
+            </a>
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />

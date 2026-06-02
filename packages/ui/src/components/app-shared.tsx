@@ -6,8 +6,11 @@ import {
   HelpCircleIcon,
   KeyRoundIcon,
   LayoutGridIcon,
+  LibraryIcon,
   PlugIcon,
+  ServerIcon,
   SettingsIcon,
+  UserIcon,
   UsersIcon,
 } from "lucide-react";
 import type { ReactNode } from "react";
@@ -72,8 +75,24 @@ export const navGroups: SidebarNavGroup[] = [
     items: [
       {
         title: "Settings",
-        path: "#/settings",
         icon: <SettingsIcon />,
+        subItems: [
+          {
+            title: "Server",
+            path: "/settings/server",
+            icon: <ServerIcon />,
+          },
+          {
+            title: "Libraries",
+            path: "/settings/libraries",
+            icon: <LibraryIcon />,
+          },
+          {
+            title: "Account",
+            path: "/settings/account",
+            icon: <UserIcon />,
+          },
+        ],
       },
       {
         title: "Billing",

@@ -63,3 +63,7 @@ pnpm-debug.log*
 
 # Docker PostgreSQL data
 docker/data/
+
+# AI agents
+.claude
+.agents
