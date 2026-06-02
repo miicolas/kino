@@ -25,6 +25,7 @@
     "geist": "^1.7.1",
     "lucide-react": "^1.17.0",
     "next": "16.2.1",
+    "nuqs": "^2.8.9",
     "radix-ui": "^1.4.3",
     "react": "19.2.4",
     "react-dom": "19.2.4",
@@ -35,14 +36,14 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.4.5",
+    "@repo/typescript-config": "workspace:*",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "babel-plugin-react-compiler": "1.0.0",
     "tailwindcss": "^4",
-    "typescript": "^5",
-    "@repo/typescript-config": "workspace:*"
+    "typescript": "^5"
   },
   "ignoreScripts": [
     "sharp",
