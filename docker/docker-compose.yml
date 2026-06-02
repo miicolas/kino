@@ -15,7 +15,8 @@ services:
   migrate:
     build:
       context: ..
-      dockerfile: docker/Dockerfile.server
+      dockerfile: docker/Dockerfile.web
+      target: source
     container_name: kino-migrate
     command: ["bun", "run", "--filter", "@repo/contract", "db:push"]
     environment:
@@ -24,32 +25,6 @@ services:
       - postgres
     restart: "no"
 
-  server:
-    build:
-      context: ..
-      dockerfile: docker/Dockerfile.server
-    container_name: kino-server
-    restart: unless-stopped
-    environment:
-      NODE_ENV: production
-      DATABASE_URL: postgres://kino:kino@postgres:5432/kino
-      AUTH_SECRET: ${AUTH_SECRET}
-      APP_URL: ${APP_URL}
-      SERVER_URL: ${SERVER_URL}
-      MEDIA_ROOT: /media
-      CACHE_ROOT: /cache
-      CONFIG_ROOT: /config
-      TMDB_API_KEY: ${TMDB_API_KEY}
-    volumes:
-      - ${MEDIA_PATH}:/media
-      - ./data/cache:/cache
-      - ./data/config:/config
-    ports:
-      - "3001:3001"
-    depends_on:
-      - postgres
-      - migrate
-
   web:
     build:
       context: ..
@@ -57,12 +32,24 @@ services:
     container_name: kino-web
     restart: unless-stopped
     environment:
-      NEXT_PUBLIC_SERVER_URL: ${SERVER_URL}
-      NEXT_PUBLIC_APP_URL: ${APP_URL}
+      NODE_ENV: production
+      DATABASE_URL: postgres://kino:kino@postgres:5432/kino
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET}
+      BETTER_AUTH_URL: ${NEXT_PUBLIC_APP_URL}
+      NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL}
+      TMDB_API_KEY: ${TMDB_API_KEY}
+      MEDIA_ROOT: /media
+      CACHE_ROOT: /cache
+      CONFIG_ROOT: /config
+    volumes:
+      - ${MEDIA_PATH}:/media
+      - ./data/cache:/cache
+      - ./data/config:/config
     ports:
       - "3000:3000"
     depends_on:
-      - server
+      - postgres
+      - migrate
 
   cloudflared:
     image: cloudflare/cloudflared:latest

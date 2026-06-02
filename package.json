@@ -38,5 +38,8 @@
     "@hookform/resolvers": "^5.4.0",
     "react-hook-form": "^7.77.0",
     "zod": "^4.4.3"
+  },
+  "overrides": {
+    "kysely": "0.28.17"
   }
 }

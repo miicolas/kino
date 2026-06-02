@@ -3,6 +3,14 @@
   "globalDependencies": [
     "**/.env.*local"
   ],
+  "globalEnv": [
+    "NODE_ENV",
+    "DATABASE_URL",
+    "BETTER_AUTH_SECRET",
+    "BETTER_AUTH_URL",
+    "TMDB_API_KEY",
+    "AUTH_ALLOWED_HOSTS"
+  ],
   "tasks": {
     "dev": {
       "cache": false,
@@ -12,22 +20,30 @@
       "dependsOn": [
         "^build"
       ],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        ".env*"
+      ],
+      "env": [
+        "NEXT_PUBLIC_APP_URL"
+      ],
       "outputs": [
         ".next/**",
         "!.next/cache/**",
         "dist/**"
       ]
     },
-    "type-check": {
+    "check-types": {
       "dependsOn": [
-        "^type-check"
+        "^check-types"
       ],
       "inputs": [
         "$TURBO_DEFAULT$"
       ],
+      // Cache the TS incremental build info so the next check is near-instant.
       "outputs": [
         "**/*.tsbuildinfo"
-      ] // 关键：缓存 TS 的增量信息，让下次检查秒开
+      ]
     },
     "lint": {}
   }

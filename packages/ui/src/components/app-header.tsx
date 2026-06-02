@@ -2,7 +2,7 @@ import { cn } from "@repo/ui/lib/utils";
 import { Button } from "@repo/ui/components/button";
 import { Separator } from "@repo/ui/components/separator";
 import { DecorIcon } from "@repo/ui/components/decor-icon";
-import { AppBreadcrumbs } from "@repo/ui/components/1/app-breadcrumbs";
+import { AppBreadcrumbs } from "@repo/ui/components/app-breadcrumbs";
 import { navLinks } from "@repo/ui/components/app-shared";
 import { CustomSidebarTrigger } from "@repo/ui/components/custom-sidebar-trigger";
 import { NavUser } from "@repo/ui/components/nav-user";

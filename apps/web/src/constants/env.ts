@@ -1,3 +1,3 @@
 export const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
 
-export const API_RPC_PATH = "/api/v1/rpc";
+export const API_RPC_PATH = "/api/rpc";
