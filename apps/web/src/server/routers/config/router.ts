@@ -5,6 +5,6 @@ import { getStatusBase, getStatusHandler } from "./queries";
 
 export const configRouter = base.router({
   getStatus: getStatusBase.route({ method: "GET" }).handler(({ context }) => {
-    call(getStatusHandler, {}, { context });
+    return call(getStatusHandler, {}, { context });
   }),
 });
