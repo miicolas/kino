@@ -14,6 +14,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { authClient } from "@/lib/auth-client";
 import { PasswordInput } from "../../_components/password-input";
+import { PAGES } from "@/constants/page";
 
 const schema = z.object({
   email: z.string().email("Please enter a valid email address"),
@@ -40,7 +41,7 @@ export function SignInForm() {
       {
         email: values.email,
         password: values.password,
-        callbackURL: "/",
+        callbackURL: PAGES.HUB,
       },
       {
         onError: (ctx) => {
@@ -50,7 +51,7 @@ export function SignInForm() {
         onSuccess: () => {
           router.push("/");
         },
-      }
+      },
     );
   }
 
