@@ -1,12 +1,12 @@
+import type { User } from "better-auth";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { nextCookies } from "better-auth/next-js";
 import { admin } from "better-auth/plugins";
-import type { User } from "better-auth";
 import { count } from "drizzle-orm";
 import { db } from "../drizzle/db";
-import { user } from "../schema/auth/schema";
 import { env } from "../env";
+import { user } from "../schema/auth/schema";
 
 function getAllowedHosts(): string[] {
   const hosts = ["localhost:3000"];
@@ -16,7 +16,7 @@ function getAllowedHosts(): string[] {
       ...extra
         .split(",")
         .map((host) => host.trim())
-        .filter(Boolean),
+        .filter(Boolean)
     );
   }
   return hosts;
