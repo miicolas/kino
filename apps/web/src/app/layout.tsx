@@ -1,12 +1,12 @@
-import type { Metadata } from "next";
-import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
+import { GeistSans } from "geist/font/sans";
+import type { Metadata } from "next";
 import "./globals.css";
-import QueryProvider from "@/providers/query-provider";
 import { Outfit } from "next/font/google";
 import { cn } from "@/lib/utils";
+import QueryProvider from "@/providers/query-provider";
 
-const outfit = Outfit({subsets:['latin'],variable:'--font-sans'});
+const outfit = Outfit({ subsets: ["latin"], variable: "--font-sans" });
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -20,15 +20,23 @@ export default function RootLayout({
 }>) {
   return (
     <html
+      className={cn(
+        "h-full",
+        "antialiased",
+        GeistSans.variable,
+        GeistMono.variable,
+        "font-sans",
+        outfit.variable
+      )}
       lang="en"
-      className={cn("h-full", "antialiased", GeistSans.variable, GeistMono.variable, "font-sans", outfit.variable)}
     >
-      <body className="min-h-full flex flex-col" suppressHydrationWarning>
+      <body className="flex min-h-full flex-col" suppressHydrationWarning>
         <QueryProvider>
           <div className="relative flex min-h-screen flex-col selection:bg-black selection:text-white">
             {children}
           </div>
-        </QueryProvider></body>
+        </QueryProvider>
+      </body>
     </html>
   );
 }

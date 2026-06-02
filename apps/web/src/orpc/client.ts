@@ -3,8 +3,8 @@ import { RPCLink } from "@orpc/client/fetch";
 import { BatchLinkPlugin, DedupeRequestsPlugin } from "@orpc/client/plugins";
 import type { RouterClient } from "@orpc/server";
 import { createTanstackQueryUtils } from "@orpc/tanstack-query";
-import type { appRouter } from "@/server/routers/_app";
 import { API_RPC_PATH } from "@/constants/env";
+import type { appRouter } from "@/server/routers/_app";
 
 declare global {
   // eslint-disable-next-line no-var

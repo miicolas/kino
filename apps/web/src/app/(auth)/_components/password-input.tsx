@@ -1,13 +1,12 @@
 "use client";
 
-import { Eye, EyeOff, Lock } from "lucide-react";
-import React from "react";
-
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
 } from "@repo/ui/components/input-group";
+import { Eye, EyeOff, Lock } from "lucide-react";
+import React from "react";
 
 type PasswordInputProps = Omit<
   React.ComponentProps<typeof InputGroupInput>,

@@ -1,6 +1,9 @@
 import { onError } from "@orpc/server";
 import { RPCHandler } from "@orpc/server/fetch";
-import { BatchHandlerPlugin, StrictGetMethodPlugin } from "@orpc/server/plugins";
+import {
+  BatchHandlerPlugin,
+  StrictGetMethodPlugin,
+} from "@orpc/server/plugins";
 import { db } from "@repo/contract/drizzle";
 import { appRouter } from "@/server/routers/_app";
 

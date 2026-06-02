@@ -49,4 +49,5 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
+/* biome-ignore lint/correctness/noInvalidPositionAtImportRule: imported last on purpose so local @theme tokens above take precedence; Tailwind v4 resolves this @import at build time. */
 @import "@repo/ui/globals.css";

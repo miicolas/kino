@@ -1,8 +1,8 @@
-import { defineConfig } from "drizzle-kit";
-import { config } from "dotenv";
 import { resolve } from "node:path";
+import { config } from "dotenv";
+import { defineConfig } from "drizzle-kit";
 
-config({ path: resolve(__dirname, "../../.env") });
+config({ path: resolve(import.meta.dirname, "../../.env") });
 
 export default defineConfig({
   dialect: "postgresql",
