@@ -59,7 +59,10 @@ export function AppSidebar() {
           ))}
         </SidebarMenu>
         <div className="px-4 pt-4 pb-2 transition-opacity group-data-[collapsible=icon]:pointer-events-none group-data-[collapsible=icon]:opacity-0">
-          <p className="text-nowrap text-[9px] text-muted-foreground">
+          <p
+            className="text-nowrap text-[9px] text-muted-foreground"
+            suppressHydrationWarning
+          >
             © {new Date().getFullYear()} Kino
           </p>
         </div>

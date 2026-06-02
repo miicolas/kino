@@ -17,5 +17,8 @@
     "hooks": "@repo/ui/hooks",
     "utils": "@repo/ui/lib/utils"
   },
-  "iconLibrary": "lucide"
+  "iconLibrary": "lucide",
+  "registries": {
+    "@reui": "https://reui.io/r/{style}/{name}.json"
+  }
 }

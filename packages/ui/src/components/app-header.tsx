@@ -3,14 +3,14 @@ import { navLinks } from "@repo/ui/components/app-shared";
 import { Button } from "@repo/ui/components/button";
 import { CustomSidebarTrigger } from "@repo/ui/components/custom-sidebar-trigger";
 import { DecorIcon } from "@repo/ui/components/decor-icon";
-import { NavUser } from "@repo/ui/components/nav-user";
+import { NavUser, type NavUserData } from "@repo/ui/components/nav-user";
 import { Separator } from "@repo/ui/components/separator";
 import { cn } from "@repo/ui/lib/utils";
 import { BellIcon, SendIcon } from "lucide-react";
 
 const activeItem = navLinks.find((item) => item.isActive);
 
-export function AppHeader() {
+export function AppHeader({ user }: { user: NavUserData }) {
   return (
     <header
       className={cn(
@@ -38,7 +38,7 @@ export function AppHeader() {
           className="h-4 data-[orientation=vertical]:self-center"
           orientation="vertical"
         />
-        <NavUser />
+        <NavUser user={user} />
       </div>
     </header>
   );

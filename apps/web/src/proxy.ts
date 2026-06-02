@@ -1,5 +1,5 @@
 import { auth } from "@repo/contract/auth";
-import { db } from "@repo/contract/drizzle";
+import { db, serverConfig } from "@repo/contract/drizzle";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { PAGES, ROLES } from "@/constants";
@@ -12,7 +12,10 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(new URL(PAGES.SIGN_IN, request.url));
   }
 
-  const config = await db.query.serverConfig.findFirst();
+  const [config] = await db
+    .select({ setupCompletedAt: serverConfig.setupCompletedAt })
+    .from(serverConfig)
+    .limit(1);
   const setupCompleted = config?.setupCompletedAt != null;
   const isAdmin = session.user.role === ROLES.ADMIN;
 
@@ -28,11 +31,21 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(new URL(PAGES.HUB, request.url));
   }
 
+  // Les réglages serveur sont réservés aux admins.
+  if (pathname.startsWith(PAGES.SETTINGS) && !isAdmin) {
+    return NextResponse.redirect(new URL(PAGES.HUB, request.url));
+  }
+
   return NextResponse.next();
 }
 
 export const config = {
   // Scope explicite aux routes gardées ; n'inclut pas /, /sign-in, /sign-up (évite les boucles).
   // ⚠️ Ajouter ici toute nouvelle route du groupe (app) — les route groups sont transparents en URL.
-  matcher: ["/hub/:path*", "/setup/:path*", "/setup-pending/:path*"],
+  matcher: [
+    "/hub/:path*",
+    "/setup/:path*",
+    "/setup-pending/:path*",
+    "/settings/:path*",
+  ],
 };

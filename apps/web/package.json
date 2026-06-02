@@ -11,6 +11,8 @@
     "check-types": "tsc --noEmit"
   },
   "dependencies": {
+    "@headless-tree/core": "^1.7.0",
+    "@headless-tree/react": "^1.7.0",
     "@orpc/client": "^1.14.4",
     "@orpc/server": "^1.14.4",
     "@orpc/tanstack-query": "^1.14.4",
