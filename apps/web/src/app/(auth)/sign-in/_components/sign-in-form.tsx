@@ -8,10 +8,10 @@ import {
   InputGroupInput,
 } from "@repo/ui/components/input-group";
 import { Mail } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { PAGES } from "@/constants/page";
 import { authClient } from "@/lib/auth-client";
 import { PasswordInput } from "../../_components/password-input";
 
@@ -23,7 +23,6 @@ const schema = z.object({
 type FormValues = z.infer<typeof schema>;
 
 export function SignInForm() {
-  const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -40,15 +39,12 @@ export function SignInForm() {
       {
         email: values.email,
         password: values.password,
-        callbackURL: "/",
+        callbackURL: PAGES.HUB,
       },
       {
         onError: (ctx) => {
           setIsLoading(false);
           setError(ctx.error.message ?? "Invalid email or password.");
-        },
-        onSuccess: () => {
-          router.push("/");
         },
       }
     );

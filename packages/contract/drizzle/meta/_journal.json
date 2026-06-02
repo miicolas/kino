@@ -8,6 +8,20 @@
       "when": 1780388183145,
       "tag": "0000_init_auth",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1780395593847,
+      "tag": "0001_thankful_namorita",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1780396348699,
+      "tag": "0002_absurd_marrow",
+      "breakpoints": true
     }
   ]
 }

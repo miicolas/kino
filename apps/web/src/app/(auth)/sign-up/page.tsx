@@ -1,3 +1,5 @@
+import Link from "next/link";
+import { PAGES } from "@/constants/page";
 import { SignUpForm } from "./_components/sign-up-form";
 
 export const metadata = { title: "Sign up" };
@@ -15,12 +17,12 @@ export default function PageSignUp() {
         <SignUpForm />
         <p className="text-center text-muted-foreground text-sm">
           Already have an account?{" "}
-          <a
+          <Link
             className="text-foreground underline-offset-4 hover:underline"
-            href="/sign-in"
+            href={PAGES.SIGN_IN}
           >
             Sign in
-          </a>
+          </Link>
         </p>
       </div>
     </div>

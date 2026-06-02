@@ -12,6 +12,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { PAGES } from "@/constants/page";
 import { authClient } from "@/lib/auth-client";
 import { PasswordInput } from "../../_components/password-input";
 
@@ -45,7 +46,7 @@ export function SignUpForm() {
         name: values.name,
         email: values.email,
         password: values.password,
-        callbackURL: "/setup",
+        callbackURL: PAGES.SETUP,
       },
       {
         onError: (ctx) => {
@@ -53,7 +54,7 @@ export function SignUpForm() {
           setError(ctx.error.message ?? "An error occurred during sign up.");
         },
         onSuccess: () => {
-          router.push("/");
+          router.push(PAGES.SETUP);
         },
       }
     );

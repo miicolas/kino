@@ -11,6 +11,11 @@ services:
       - ./data/postgres:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U kino -d kino"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   migrate:
     build:
@@ -18,11 +23,12 @@ services:
       dockerfile: docker/Dockerfile.web
       target: source
     container_name: kino-migrate
-    command: ["bun", "run", "--filter", "@repo/contract", "db:push"]
+    command: ["bun", "run", "--filter", "@repo/contract", "db:migrate"]
     environment:
       DATABASE_URL: postgres://kino:kino@postgres:5432/kino
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     restart: "no"
 
   web:
@@ -48,8 +54,10 @@ services:
     ports:
       - "3000:3000"
     depends_on:
-      - postgres
-      - migrate
+      postgres:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
 
   cloudflared:
     image: cloudflare/cloudflared:latest

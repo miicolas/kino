@@ -7,7 +7,7 @@ COPY packages/ui/package.json packages/ui/
 COPY packages/typescript-config/package.json packages/typescript-config/
 RUN bun install --frozen-lockfile
 
-# Full source — used by the `migrate` service (runs drizzle push without a Next build)
+# Full source — used by the `migrate` service (runs migrations without a Next build)
 FROM deps AS source
 COPY . .
 
