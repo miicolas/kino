@@ -6,6 +6,7 @@
     "includes": [
       "!node_modules",
       "!.vercel",
+      "!.agents",
       "!dist",
       "!**/components.d.ts",
       "!**/auto-imports.d.ts",
@@ -42,7 +43,6 @@
       },
       //  新特性规则
       "nursery": {
-      
         "noShadow": "off",
         "noIncrementDecrement": "off",
         "noSyncScripts": "off",

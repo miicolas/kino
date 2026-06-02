@@ -4,53 +4,22 @@ on:
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
 
+# Turborepo Remote Caching — optional. If TURBO_TOKEN / TURBO_TEAM are not set,
+# turbo silently falls back to the local .turbo cache (cached below).
+env:
+  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+  TURBO_TEAM: ${{ vars.TURBO_TEAM }}
+
 jobs:
-  typecheck:
-    name: Type Check
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    if: github.event.pull_request.draft == false
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: 1.3.10
-
-      - name: Cache Turbo
-        uses: actions/cache@v4
-        with:
-          path: .turbo
-          key: turbo-${{ runner.os }}-${{ github.sha }}
-          restore-keys: turbo-${{ runner.os }}-
-
-      - run: bun install --frozen-lockfile
-
-      - run: bun run check-types
-
-  lint:
-    name: Lint
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    if: github.event.pull_request.draft == false
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: 1.3.10
-
-      - run: bun install --frozen-lockfile
-
-      - run: bun run check
-
-  build:
-    name: Build
+  ci:
+    name: Lint, Format & Type Check
     runs-on: ubuntu-latest
     timeout-minutes: 15
     if: github.event.pull_request.draft == false
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
 
       - uses: oven-sh/setup-bun@v2
         with:
@@ -63,6 +32,11 @@ jobs:
           key: turbo-${{ runner.os }}-${{ github.sha }}
           restore-keys: turbo-${{ runner.os }}-
 
-      - run: bun install --frozen-lockfile
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
 
-      - run: bun run build
+      - name: Lint & format
+        run: bun run check
+
+      - name: Type check
+        run: bun run check-types

@@ -10,13 +10,21 @@ permissions:
 
 jobs:
   release:
-    name: Create Release & Merge to Main
+    name: Create Release & Force main to tag
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          fetch-tags: true
           token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Determine tag commit
+        id: tag
+        run: |
+          echo "tag_name=${GITHUB_REF_NAME}" >> $GITHUB_OUTPUT
+          tag_sha=$(git rev-list -n 1 "$GITHUB_REF_NAME")
+          echo "tag_sha=$tag_sha" >> $GITHUB_OUTPUT
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
@@ -25,10 +33,10 @@ jobs:
           generate_release_notes: true
           target_commitish: dev
 
-      - name: Merge dev into main
+      - name: Force main to tag commit (overwrite, no merge)
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git checkout main
-          git merge --ff-only origin/dev
-          git push origin main
+          git fetch origin main --prune
+          git checkout -B main "${{ steps.tag.outputs.tag_sha }}"
+          git push origin main --force-with-lease

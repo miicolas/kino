@@ -13,7 +13,7 @@ function getAllowedHosts(): string[] {
       ...extra
         .split(",")
         .map((host) => host.trim())
-        .filter(Boolean),
+        .filter(Boolean)
     );
   }
   return hosts;

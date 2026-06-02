@@ -6,20 +6,16 @@
     "esModuleInterop": true,
     "incremental": false,
     "isolatedModules": true,
-    "lib": [
-      "es2022",
-      "DOM",
-      "DOM.Iterable"
-    ],
-    // 
+    "lib": ["es2022", "DOM", "DOM.Iterable"],
+    //
     "target": "ES2022",
     "module": "ESNext",
     "moduleResolution": "bundler",
     "moduleDetection": "force",
-    //  
+    //
     "noUncheckedIndexedAccess": true,
     "resolveJsonModule": true,
     "skipLibCheck": true,
-    "strict": true,
+    "strict": true
   }
 }

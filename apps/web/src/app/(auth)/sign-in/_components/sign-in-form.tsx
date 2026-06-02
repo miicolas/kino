@@ -1,21 +1,19 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Mail } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-
 import { Button } from "@repo/ui/components/button";
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
 } from "@repo/ui/components/input-group";
-
-import { PasswordInput } from "../../_components/password-input";
+import { Mail } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 import { authClient } from "@/lib/auth-client";
+import { PasswordInput } from "../../_components/password-input";
 
 const schema = z.object({
   email: z.string().email("Please enter a valid email address"),
@@ -62,7 +60,7 @@ export function SignInForm() {
       onSubmit={handleSubmit(onSubmit)}
     >
       <div className="flex flex-col gap-1">
-        <label className="text-sm font-medium" htmlFor="email">
+        <label className="font-medium text-sm" htmlFor="email">
           Email
         </label>
         <InputGroup aria-invalid={!!formState.errors.email || undefined}>
@@ -85,7 +83,7 @@ export function SignInForm() {
       </div>
 
       <div className="flex flex-col gap-1">
-        <label className="text-sm font-medium" htmlFor="password">
+        <label className="font-medium text-sm" htmlFor="password">
           Password
         </label>
         <PasswordInput

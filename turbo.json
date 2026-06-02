@@ -1,8 +1,6 @@
 {
   "$schema": "https://turborepo.dev/schema.json",
-  "globalDependencies": [
-    "**/.env.*local"
-  ],
+  "globalDependencies": ["**/.env.*local"],
   "globalEnv": [
     "NODE_ENV",
     "DATABASE_URL",
@@ -17,33 +15,16 @@
       "persistent": true
     },
     "build": {
-      "dependsOn": [
-        "^build"
-      ],
-      "inputs": [
-        "$TURBO_DEFAULT$",
-        ".env*"
-      ],
-      "env": [
-        "NEXT_PUBLIC_APP_URL"
-      ],
-      "outputs": [
-        ".next/**",
-        "!.next/cache/**",
-        "dist/**"
-      ]
+      "dependsOn": ["^build"],
+      "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      "env": ["NEXT_PUBLIC_APP_URL"],
+      "outputs": [".next/**", "!.next/cache/**", "dist/**"]
     },
     "check-types": {
-      "dependsOn": [
-        "^check-types"
-      ],
-      "inputs": [
-        "$TURBO_DEFAULT$"
-      ],
+      "dependsOn": ["^check-types"],
+      "inputs": ["$TURBO_DEFAULT$"],
       // Cache the TS incremental build info so the next check is near-instant.
-      "outputs": [
-        "**/*.tsbuildinfo"
-      ]
+      "outputs": ["**/*.tsbuildinfo"]
     },
     "lint": {}
   }

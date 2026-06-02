@@ -12,6 +12,8 @@
     "check": "bunx ultracite check",
     "fix": "bun x ultracite fix",
     "check-types": "turbo run check-types",
+    "precommit": "bun run check && bun run check-types",
+    "precommit:fix": "bun run fix && bun run check-types",
     "db:push": "bun run --filter @repo/contract db:push",
     "db:generate": "bun run --filter @repo/contract db:generate",
     "db:migrate": "bun run --filter @repo/contract db:migrate",
@@ -27,6 +29,7 @@
     ]
   },
   "devDependencies": {
+    "@biomejs/biome": "2.4.5",
     "@repo/typescript-config": "workspace:*",
     "ultracite": "7.2.5",
     "turbo": "^2.9.16"
