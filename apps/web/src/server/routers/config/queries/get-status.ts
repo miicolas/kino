@@ -1,3 +1,4 @@
+import { ROLES } from "@/constants";
 import { protectedProcedure } from "@/server/procedure/protected.procedure";
 
 export const getStatusBase = protectedProcedure.errors({
@@ -15,7 +16,7 @@ export const getStatusHandler = getStatusBase.handler(
 
       return {
         setupCompleted: config?.setupCompletedAt != null,
-        isAdmin: session.user.role === "admin",
+        isAdmin: session.user.role === ROLES.ADMIN,
       };
     } catch (error) {
       throw errors.FAIL_GET_STATUS();

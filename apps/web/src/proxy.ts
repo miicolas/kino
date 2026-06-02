@@ -2,23 +2,21 @@ import { auth } from "@repo/contract/auth";
 import { db } from "@repo/contract/drizzle";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
-import { PAGES } from "@/constants/page";
+import { PAGES, ROLES } from "@/constants";
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const session = await auth.api.getSession({ headers: request.headers });
 
-  // 1. Non authentifié → /sign-in
   if (!session) {
     return NextResponse.redirect(new URL(PAGES.SIGN_IN, request.url));
   }
 
   const config = await db.query.serverConfig.findFirst();
   const setupCompleted = config?.setupCompletedAt != null;
-  const isAdmin = session.user.role === "admin";
+  const isAdmin = session.user.role === ROLES.ADMIN;
 
   if (!setupCompleted) {
-    // 2. Admin → forcé sur /setup ; 3. Non-admin → écran d'attente /setup-pending
     const target = isAdmin ? PAGES.SETUP : PAGES.SETUP_PENDING;
     if (pathname !== target) {
       return NextResponse.redirect(new URL(target, request.url));
@@ -26,7 +24,6 @@ export async function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // 4. Setup terminé → on ne reste pas sur /setup ou /setup-pending
   if (pathname === PAGES.SETUP || pathname === PAGES.SETUP_PENDING) {
     return NextResponse.redirect(new URL(PAGES.HUB, request.url));
   }
