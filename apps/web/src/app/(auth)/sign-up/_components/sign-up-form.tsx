@@ -12,9 +12,9 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { PAGES } from "@/constants/page";
 import { authClient } from "@/lib/auth-client";
 import { PasswordInput } from "../../_components/password-input";
-import { PAGES } from "@/constants/page";
 
 const schema = z.object({
   name: z.string().min(1, "Full name is required"),
@@ -56,7 +56,7 @@ export function SignUpForm() {
         onSuccess: () => {
           router.push("/");
         },
-      },
+      }
     );
   }
 

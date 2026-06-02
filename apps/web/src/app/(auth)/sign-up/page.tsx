@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { SignUpForm } from "./_components/sign-up-form";
 import { PAGES } from "@/constants/page";
+import { SignUpForm } from "./_components/sign-up-form";
 
 export const metadata = { title: "Sign up" };
 

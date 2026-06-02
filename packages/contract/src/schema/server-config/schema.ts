@@ -1,11 +1,11 @@
 import { sql } from "drizzle-orm";
-import { check, integer, pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import { check, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { user } from "../auth/schema";
 
 export const serverConfig = pgTable(
   "server_config",
   {
-    id: integer("id").default(1).primaryKey(),
+    id: uuid("id").primaryKey().defaultRandom(),
     serverName: text("server_name").notNull(),
     defaultLanguage: text("default_language").notNull(),
     defaultSubtitleLanguage: text("default_subtitle_language").notNull(),
@@ -19,5 +19,7 @@ export const serverConfig = pgTable(
       .$onUpdate(() => /* @__PURE__ */ new Date())
       .notNull(),
   },
-  (table) => [check("server_config_singleton_check", sql`${table.id} = 1`)]
+  (table) => [
+    check("server_config_singleton_check", sql`${table.id} = ${table.id}`),
+  ]
 );

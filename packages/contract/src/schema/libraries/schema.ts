@@ -4,7 +4,7 @@ import { user } from "../auth/schema";
 export const libraryTypeEnum = pgEnum("library_type", ["movie"]);
 
 export const libraries = pgTable("libraries", {
-  id: uuid("id").defaultRandom().primaryKey(),
+  id: uuid("id").primaryKey().defaultRandom(),
   name: text("name").notNull(),
   path: text("path").notNull().unique(),
   type: libraryTypeEnum("type").default("movie").notNull(),
